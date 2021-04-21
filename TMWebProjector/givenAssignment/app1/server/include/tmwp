@@ -1,0 +1,42 @@
+#include<iostream>
+using namespace std;
+typedef struct _request
+{
+char *method;
+char *resource;
+char *mimeType;
+char isClientSideTechnologyResource;
+int dataCount;
+char **data;
+int clientSocketDescriptor;
+}REQUEST;
+namespace tmwp
+{
+class Request
+{
+REQUEST *request;
+public:
+Request(REQUEST *request);
+string get(const char *data);
+};
+class Response
+{
+REQUEST *request;
+public:
+Response(REQUEST *request);
+void write(const char *data);
+void close();
+};
+class TMWebProjector
+{
+private:
+int portNumber;
+char *url;
+void (*ptrOnRequest)(Request &request,Response &response);
+public:
+TMWebProjector(int portNumber);
+~TMWebProjector();
+void onRequest(const char *url,void (*ptrOnRequest)(Request &request,Response &response));
+void start();
+};
+}
