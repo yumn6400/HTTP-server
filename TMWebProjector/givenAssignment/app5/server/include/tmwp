@@ -1,0 +1,54 @@
+#include<iostream>
+#include<map>
+using namespace std;
+typedef struct _request
+{
+char *method;
+char *resource;
+char *mimeType;
+char isClientSideTechnologyResource;
+int dataCount;
+char **data;
+int clientSocketDescriptor;
+}REQUEST;
+
+class Response
+{
+REQUEST *response;
+public:
+Response(REQUEST *response);
+void write(const char *data);
+void close();
+};
+class Request
+{
+REQUEST *request;
+char *url;
+map<const char *,int> requestValue;
+public:
+void (*ptrOnRequest)(Request &request,Response &response);
+Request(REQUEST *request);
+string get(const char *data);
+void forward(const char *data);
+void forwardToExtensionSCT(const char *str);
+void sendSCTSubjectName(const char *data);
+void setInt(const char *data,int value);
+int getInt(const char *data);
+};
+namespace tmwp
+{
+class TMWebProjector
+{
+private:
+int portNumber;
+char *url;
+public:
+
+void (*ptrOnRequest)(Request &request,Response &response);
+static map<char *,void(*)(Request &,Response &)> dataCollection;
+TMWebProjector(int portNumber);
+~TMWebProjector();
+void onRequest(const char *url,void (*ptrOnRequest)(Request &request,Response &response));
+void start();
+};
+}

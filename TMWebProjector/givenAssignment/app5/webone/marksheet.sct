@@ -1,0 +1,16 @@
+<!DOCTYPE HTML>
+<html lang='en'>
+<head>
+<meta charset='utf-8'>
+<title>Whatever</title>
+</head>
+<body>
+<h1>Marksheet</h1>
+<h2>Ujjain Enginnering College,Ujjain</h2>
+<h3>Physics:${physics}</h3>
+<h3>Chemistry:${chemistry}</h3>
+<h3>Mathematics:${mathematics}</h3>
+<h3>English:${english}</h3>
+<h3>Hindi:${hindi}</h3>
+(Marks as per institution record)
+</body>
