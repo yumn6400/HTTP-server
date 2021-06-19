@@ -1,0 +1,81 @@
+#ifndef ___TMWP_
+#define ___TMWP_ 123
+#include<iostream>
+#include<map>
+#include<tuple>
+#include<thread>
+using namespace std;
+namespace tmwp
+{
+class Request
+{
+public:
+char *method;
+char *resource;
+char *mimeType;
+char isClientSideTechnologyResource;
+int dataCount;
+char **data;
+string forwardTo;
+string get(string name);
+map<string,string>keyValues;
+void setKeyValue(string k,string v);
+string getValue(string k);
+void forward(string forwardTo);
+};
+class Response
+{
+private:
+int clientSocketDescriptor;
+bool isClosed;
+bool headerCreated;
+void createHeader();
+public:
+Response(int clientSocketDescriptor);
+void write(const char *str);
+void write(string str);
+void close();
+};
+class TMWebProjector
+{
+private:
+int portNumber; 	
+map<string,void(*)(Request &,Response &)>requestMappings;
+public:
+TMWebProjector(int portNumber); 
+~TMWebProjector();
+void onRequest(string url,void (*ptrOnRequest)(Request &,Response &));
+void start();
+};
+template<typename p2f,typename ...whatever>
+class ThreadManager
+{
+private:
+thread *ttt;
+p2f funcAddress;
+tuple<whatever...> t;
+public:
+ThreadManager(p2f f,whatever... n):funcAddress(f),t(n...),ttt(NULL){};
+~ThreadManager()
+{
+if(ttt)
+{
+this->ttt->join();
+delete ttt;
+}
+}
+ThreadManager(const ThreadManager &other)=delete;
+ThreadManager & operator =(const ThreadManager &other)=delete;
+void * operator new(size_t)=delete;
+void start()
+{
+ThreadStarter(t,index_sequence_for<whatever...>());
+}
+template<size_t ...c>
+void ThreadStarter(tuple<whatever...> &t,index_sequence<c...>)
+{
+this->ttt=new thread(funcAddress,get<c>(t)...);
+}
+};
+}
+#endif
